@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/julienbaley/ds.svg?branch=master)](https://travis-ci.com/julienbaley/ds)
+
 # ds
 Digital Sinology projects
 
