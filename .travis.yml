@@ -1,0 +1,24 @@
+language: python
+python:
+  - "3.7"
+  - "3.8"
+
+# command to install dependencies
+install:
+  - pip install -e .
+  - pip install flake8 coverage coveralls mock python-coveralls
+
+# command to run tests
+script:
+  - flake8 . scripts/flint
+  - nosetests --with-coverage --cover-package=ds --cover-package=modules --nologcapture
+
+notifications:
+  email:
+    - julien.baley@gmail.com
+  webhooks:
+    - https://coveralls.io/webhook?repo_token=bZNuoegkcyfB7pWKvnZiU97nQjh94ZNiC
+
+after_success:
+  - coverage combine
+  - coveralls
