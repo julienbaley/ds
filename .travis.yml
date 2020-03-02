@@ -16,8 +16,6 @@ script:
 notifications:
   email:
     - julien.baley@gmail.com
-  webhooks:
-    - https://coveralls.io/webhook?repo_token=bZNuoegkcyfB7pWKvnZiU97nQjh94ZNiC
 
 after_success:
   - coverage combine
