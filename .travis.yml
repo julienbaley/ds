@@ -11,6 +11,7 @@ env:
     - C_INCLUDE_PATH=/usr/include/gdal
 
 before_install:
+  - sudo apt-get update
   - sudo apt-get -y install libgdal-dev
 
 install:
