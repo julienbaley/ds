@@ -3,9 +3,15 @@ python:
   - "3.7"
   - "3.8"
 
-# command to install dependencies
+env:
+  global:
+    - CPLUS_INCLUDE_PATH=/usr/include/gdal
+    - C_INCLUDE_PATH=/usr/include/gdal
+
+before_install:
+  - sudo apt-get -y install libgdal-dev
+
 install:
-  - apt-get install libgdal-dev
   - pip install -e .
   - pip install flake8 coverage coveralls mock
 
@@ -21,9 +27,3 @@ notifications:
 after_success:
   - coverage combine
   - coveralls
-
-env:
-  global:
-    # AWS credentials (ID , Key)
-    - CPLUS_INCLUDE_PATH=/usr/include/gdal
-    - C_INCLUDE_PATH=/usr/include/gdal
