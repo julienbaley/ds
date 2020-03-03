@@ -3,7 +3,18 @@ python:
   - "3.7"
   - "3.8"
 
-# command to install dependencies
+dist: bionic
+
+env:
+  global:
+    - CPLUS_INCLUDE_PATH=/usr/include/gdal
+    - C_INCLUDE_PATH=/usr/include/gdal
+
+before_install:
+  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+  - sudo apt-get update
+  - sudo apt-get -y install libgdal-dev=3.0.2+dfsg-1~bionic2
+
 install:
   - pip install -e .
   - pip install flake8 coverage coveralls mock
