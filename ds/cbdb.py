@@ -19,19 +19,6 @@ def rows2dicts(rows):
     return [dict(zip(row.keys(), row)) for row in rows]
 
 
-def restrict_job(c_personids, job):
-    with get_cursor() as cursor:
-        cursor.execute(
-            f'''SELECT status_data.c_personid
-                FROM status_data
-                JOIN status_codes
-                ON status_codes.c_status_code == status_data.c_status_code
-                WHERE c_personid IN {c_personids}
-                AND c_status_desc == '{job}';
-            ''')
-        return list(map(itemgetter('c_personid'), cursor.fetchall()))
-
-
 def pick_one_per_address(res):
     return [next(addresses)
             for _, addresses in groupby(res, key=itemgetter('c_personid'))]
