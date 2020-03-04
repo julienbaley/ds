@@ -1,4 +1,4 @@
-git clone git@github.com:chinese-poetry/chinese-poetry.git
+git clone https://github.com/chinese-poetry/chinese-poetry.git
 cd chinese-poetry
 git checkout 8372a09f766cf4dafb7711123c3135717c6e9e3e
 cd ..
