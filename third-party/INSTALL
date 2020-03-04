@@ -3,6 +3,11 @@ cd chinese-poetry
 git checkout 8372a09f766cf4dafb7711123c3135717c6e9e3e
 cd ..
 
+git clone https://github.com/julienbaley/cbdb.git
+cd cbdb
+cat CBDB_20190424.dba* > CBDB_20190424.db
+cd ..
+
 mkdir gis
 cd gis
 for id in 2966746 2966747 2966748; # prefectures, counties, provinces
@@ -10,8 +15,3 @@ do
     wget https://dataverse.harvard.edu/api/access/datafile/${id}?gbrecs=true -O temp.zip && unzip temp.zip && rm temp.zip;
 done
 cd ..
-
-mkdir cbdb
-# xdg-open https://docs.google.com/spreadsheets/d/1KNX4FPVbFII0HP2FEiQooGpdONobGM9QVdEIQvGz2h8/edit#gid=1668212716
-# xdg-open https://hu-my.sharepoint.com/personal/hongsuwang_fas_harvard_edu/_layouts/15/download.aspx?SourceUrl=%2Fpersonal%2Fhongsuwang%5Ffas%5Fharvard%5Fedu%2FDocuments%2Fcbdb%5Fwebsite%2Fdownload%2FCBDB%5F20190424%2Erar
-echo "Go to your browser and download the CBDB code book and database"
