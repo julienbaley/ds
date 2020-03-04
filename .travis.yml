@@ -1,7 +1,6 @@
 language: python
 python:
   - "3.7"
-  - "3.8"
 
 dist: bionic
 
@@ -16,12 +15,13 @@ before_install:
   - sudo apt-get -y install libgdal-dev=3.0.2+dfsg-1~bionic2
 
 install:
+  - cd third-party && ./INSTALL && cd ..
   - pip install -e .
   - pip install flake8 coverage coveralls mock
 
 # command to run tests
 script:
-  - flake8 . scripts/flint
+  - flake8 ds/
   - nosetests --with-coverage --cover-package=ds --cover-package=modules --nologcapture
 
 notifications:
