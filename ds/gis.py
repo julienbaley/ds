@@ -48,10 +48,14 @@ def get_first(dic, keys):
     raise KeyError(keys)
 
 
+# only public function
+
+
 def get_province(*, y, x, type='province'):
     if not x:
         return None
+    point = Point(y, x)
     for province in readers[type].provinces:
-        if Point(y, x).within(province.sh):
+        if point.within(province.sh):
             d = province.record.as_dict()
             return get_first(d, ['NAME_HZ', 'NAME_FT', 'HZ_NAME'])
