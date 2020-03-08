@@ -130,3 +130,4 @@ dmypy.json
 
 # third-parties downloaded through third-party/INSTALL
 third-party/*/
+cache/*
