@@ -2,8 +2,18 @@ import unittest
 
 from ds import authors, corpus
 
+authors.AUTHORS = {'qts': 'test/authors.tang.json'}
+
 
 class TestCorpus(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.original_cache_file = authors.AUTHOR_CACHE
+        with tempfile.NamedTemporaryFile(delete=False) as g:
+            cls.cache_file = g.name
+        authors.AUTHOR_CACHE = g.name
+        authors.cache_authors('qts')
+
     def test_get_corpus(self):
         qts = corpus.get_corpus('qts')
         self.assertTrue(all('author' in poem for poem in qts))
