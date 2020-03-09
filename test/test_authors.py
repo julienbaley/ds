@@ -10,6 +10,7 @@ authors.AUTHORS = {'qts': 'test/authors.tang.json'}
 class TestAuthors(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.original_cache_file = authors.AUTHOR_CACHE
         with tempfile.NamedTemporaryFile(delete=False) as g:
             cls.cache_file = g.name
         authors.AUTHOR_CACHE = g.name
@@ -18,6 +19,7 @@ class TestAuthors(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         os.remove(cls.cache_file)
+        authors.AUTHOR_CACHE = cls.original_cache_file
 
     def test_get_alternative_names(self):
         auths = authors.get_authors('qts')
@@ -42,3 +44,27 @@ class TestAuthors(unittest.TestCase):
         # after removal of ambiguous names, he's not in the list any more
         self.assertEquals(2, len(auths))
         self.assertNotIn('王融', auths)
+
+    def test_filter_by_area(self):
+        auths = authors.load_authors('qts')
+        auths = [auths['歐陽詹'][0], auths['韓愈'][0]]
+
+        north = authors.filter_by_area(authors.NORTH, auths)
+        south = authors.filter_by_area(authors.SOUTH, auths)
+
+        self.assertEquals(1, len(north))
+        self.assertEquals(1, len(south))
+        self.assertEquals('韓愈', north[0]['c_name_chn'])
+        self.assertEquals('歐陽詹', south[0]['c_name_chn'])
+
+    def test_filter_by_province(self):
+        auths = authors.load_authors('qts')
+        auths = [auths['歐陽詹'][0], auths['韓愈'][0]]
+
+        fujian = authors.filter_by_area('福建', auths)
+        shaanxi = authors.filter_by_area('陝西', auths)
+
+        self.assertEquals(1, len(fujian))
+        self.assertEquals(1, len(shaanxi))
+        self.assertEquals('韓愈', shaanxi[0]['c_name_chn'])
+        self.assertEquals('歐陽詹', fujian[0]['c_name_chn'])

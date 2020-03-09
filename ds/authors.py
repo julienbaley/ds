@@ -9,6 +9,7 @@ from pprint import pprint
 from tqdm import tqdm
 
 from .cbdb import get_person
+from .helpers import filter_constraint
 
 
 AUTHORS = {'qts': 'third-party/chinese-poetry/json/authors.tang.json',
@@ -19,6 +20,11 @@ DYNASTY = {'qts': '唐',
            'qsc': '宋',
            }
 AUTHOR_CACHE = 'cache/authors.csv'
+
+NORTH = {'河南', '陝西', '河北', '山西', '山東', '甘肅', '北京', '遼寧', '天津',
+         '新疆', '寧夏', '内蒙古'}
+SOUTH = {'江蘇', '浙江', '福建', '江西', '四川', '安徽', '湖北', '湖南', '廣東',
+         '廣西', '上海', '雲南', '貴州', '海南'}
 
 
 def get_authors(collection):
@@ -81,3 +87,10 @@ def keep_only_unambiguous(authors):
 
     print(f'{len(ret)} authors left after ambiguous removed')
     return ret
+
+
+def filter_by_area(area, authors):
+    if type(area) == str:
+        return filter_by_area({area}, authors)
+
+    return filter_constraint({'province': area.__contains__}, authors)
