@@ -1,6 +1,8 @@
 import json
 from glob import glob
+from operator import itemgetter
 
+from .helpers import filter_constraint
 from .poem import Poem
 
 CORPORA = {'qts': 'third-party/chinese-poetry/json/poet.tang',
@@ -29,3 +31,14 @@ def get_corpus(name):
 
     print(f'{len(ret)} poems in corpus')
     return list(map(Poem, ret))
+
+
+def filter_by_authors(authors, corpus):
+    if type(authors) != str:
+        if all(issubclass(type(auth), dict) for auth in authors):
+            authors = set(map(itemgetter('c_name_chn'), authors))
+
+    else:
+        return filter_by_authors({authors}, corpus)
+
+    return filter_constraint({'author': authors.__contains__}, corpus)
