@@ -19,7 +19,7 @@ class TestGraph(unittest.TestCase):
     def grouping_fun(p):
         return [[line[-1] for line in p[1::2]]]  # all even lines rhyme
 
-    def test_build_single_poem_graph(self):        
+    def test_build_single_poem_graph(self):
         nodes, edges = graph.build_single_poem_graph(self.poem,
                                                      self.grouping_fun)
 
