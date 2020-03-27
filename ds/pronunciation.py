@@ -161,3 +161,7 @@ def get_final(pron):
              extract_final_baxter(subpron['GY Baxter']))
             for subpron in pron
             ] or [extract_final_schuessler(pron[0]['MC/QY'])]
+
+
+def get_rhyme(c, prons):
+    return sorted(set(p['GY Rhyme'] for p in prons[c] if p['GY Rhyme']))

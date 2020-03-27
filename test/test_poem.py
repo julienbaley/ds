@@ -11,6 +11,12 @@ class TestPoem(unittest.TestCase):
             "烽火連三月，家書抵萬金。",
             "白頭搔更短，渾欲不勝簪。"
         ]
+        self.prons = {
+            '深': [{'GY Rhyme': '侵'}, {'GY Rhyme': '沁'}],
+            '心': [{'GY Rhyme': '侵'}],
+            '金': [{'GY Rhyme': '侵'}],
+            '簪': [{'GY Rhyme': '侵'}, {'GY Rhyme': '覃'}],
+        }
 
     def test_poem(self):
         p = poem.Poem(paragraphs=self.poem, author='杜甫', title='春望')
@@ -21,3 +27,8 @@ class TestPoem(unittest.TestCase):
     def test_get_rhymes(self):
         p = poem.Poem(paragraphs=self.poem)
         self.assertEquals(['深', '心', '金', '簪'], p.get_rhymes())
+
+    def test_get_rhyme_categories(self):
+        p = poem.Poem(paragraphs=self.poem)
+        self.assertEquals(['侵', '侵', '侵', '侵'],
+                          p.get_rhyme_categories(self.prons))
