@@ -12,7 +12,7 @@ env:
 before_install:
   - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
   - sudo apt-get update
-  - sudo apt-get -y install libgdal-dev=3.0.2+dfsg-1~bionic2
+  - sudo apt-get -y install libgdal-dev=3.0.4+dfsg-1~bionic0
 
 install:
   - cd third-party && ./INSTALL && cd ..
