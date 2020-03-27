@@ -1,7 +1,7 @@
 import tempfile
 from collections import Counter
 from html import unescape
-from itertools import chain, combinations, filterfalse
+from itertools import combinations, filterfalse
 from operator import itemgetter
 
 import matplotlib
@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from igraph import Graph
 from tqdm import tqdm
+
+from .helpers import window_combinations
 
 FONT = 'Noto Sans CJK TC'
 matplotlib.rcParams['font.family'] = FONT
@@ -22,19 +24,6 @@ def nx2igraph(nx_graph):
     for v in ret.vs:
         v['label'] = unescape(v['label'])
     return ret
-
-
-def window_combinations(lst, wsize):
-    '''Slides a window over input and returns the combinations of items in each
-    window; typical use cases are wsize=2 which is equivalent to listing the
-    windows, and wsize=len(lst) which will give all the combinations of rhymes
-    '''
-    return set(chain.from_iterable(map(lambda w: list(combinations(w, 2)),
-                                       window(lst, wsize))))
-
-
-def window(lst, n):
-    return [lst[i:i+n] for i in range(len(lst)-(n-1))]
 
 
 def build_single_poem_graph(poem, rhyme_group_fun):

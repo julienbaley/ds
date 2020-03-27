@@ -1,31 +1,8 @@
 import unittest
 from collections import Counter
-from itertools import combinations
 
 from ds import graph
 
-
-class TestWindow(unittest.TestCase):
-    def test_window(self):
-        self.assertEqual(['a', 'b', 'c', 'd', 'e'],
-                         graph.window('abcde', 1))
-        self.assertEqual(['ab', 'bc', 'cd', 'de'],
-                         graph.window('abcde', 2))
-        self.assertEqual(['abc', 'bcd', 'cde'],
-                         graph.window('abcde', 3))
-
-    def test_window_empty(self):
-        self.assertEqual([], graph.window('', 1))
-
-    def test_window_combination(self):
-        self.assertEqual({('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e')},
-                         graph.window_combinations('abcde', 2))
-        self.assertEqual({('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e'),
-                          ('a', 'c'), ('a', 'd'), ('a', 'e'),
-                          ('b', 'd'), ('b', 'e'),
-                          ('c', 'e')
-                          },
-                         graph.window_combinations('abcde', len('abcde')))
 
 class TestGraph(unittest.TestCase):
     def setUp(self):
