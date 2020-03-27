@@ -28,7 +28,7 @@ class TestAuthors(unittest.TestCase):
 
         self.assertEquals('韓愈', auths[1]['name'])
         self.assertEquals({'文', '退之'}, authors.get_zis(auths[1]))
-        
+
     def test_load_authors(self):
         auths = authors.load_authors('qts')
         self.assertEquals(1, len(auths['歐陽詹']))

@@ -21,7 +21,7 @@ install:
 
 # command to run tests
 script:
-  - flake8 ds/
+  - flake8 ds/ test/
   - nosetests --with-coverage --cover-package=ds --cover-package=modules --nologcapture
 
 notifications:
