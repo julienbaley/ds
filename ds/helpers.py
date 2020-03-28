@@ -8,7 +8,7 @@ def filter_constraint(constraint_dict, it):
 
 
 def window(lst, n, pad=False):
-    if pad:
+    if pad and len(lst) > 0:
         assert n % 2 == 1 and n > 1
         padding = [type(lst[0])()] * (n // 2)
         lst = padding + lst + padding

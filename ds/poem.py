@@ -1,7 +1,7 @@
 import regex as re
-from itertools import chain
+from itertools import chain, product
 
-from .helpers import window
+from .helpers import window, window_combinations
 from .pronunciation import get_rhyme
 
 
@@ -42,3 +42,10 @@ class Poem(dict):
                 gy_rhymes.append(candidate)
 
         return [''.join(sorted(gy)) for gy in gy_rhymes]
+
+    def find_rhyme_pairs(self, prons, pair):
+        gy_rhymes = self.get_rhyme_categories(prons)
+        rhyme_pairs = set(map(tuple, map(sorted,
+                                         window_combinations(gy_rhymes, 2))))
+        searched_pairs = set(map(tuple, map(sorted, product(*pair))))
+        return set(searched_pairs) & set(rhyme_pairs)
