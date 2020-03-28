@@ -1,7 +1,7 @@
 import tempfile
 from collections import Counter
 from html import unescape
-from itertools import combinations, filterfalse
+from itertools import chain, filterfalse
 from operator import itemgetter
 
 import matplotlib
@@ -81,33 +81,70 @@ def get_communities(nx_graph):
     return ret
 
 
-def keep_only_communities(nx_graph, communities):
-    # generate every possible edge between nodes of a community
-    comm_edges = {tuple(sorted(edge))
-                  for community in communities
-                  for edge in combinations(community, 2)
-                  }
+def get_non_community_edges(nx_graph, communities):
+    # retrieve all communities edges
+    comm_edges = (get_community_graph(nx_graph, community).edges
+                  for community in communities)
+    comm_edges = set(map(tuple, map(sorted, chain.from_iterable(comm_edges))))
 
-    graph_edges = map(tuple, map(sorted, nx_graph.edges))
-    non_comm_edges = list(filterfalse(comm_edges.__contains__, graph_edges))
+    # then go through the graph edges and filter out the community edges
+    return list(filterfalse(comm_edges.__contains__,
+                            map(tuple, map(sorted, nx_graph.edges))))
+
+
+def keep_only_communities(nx_graph, communities):
+    non_comm_edges = get_non_community_edges(nx_graph, communities)
+
     # remove any edge from the graph that isn't in a community
-    nx_graph.remove_edges_from(non_comm_edges)
+    ret = nx_graph.copy()
+    ret.remove_edges_from(non_comm_edges)
+    return ret
 
 
 def get_community_graph(nx_graph, community):
     return nx_graph.subgraph(community).copy()
 
 
-def plot(graph, mapping_fun=lambda c: c):
-    mapping = dict(zip(graph, map(mapping_fun, graph)))
-    print('Mapping:\n', mapping)
-    nx.draw(graph,
-            font_family=FONT,
+def plot(nx_graph, mapping_fun=lambda c: c, communities=None,
+         use_community_layout=True):
+
+    if communities is None:
+        communities = [nx_graph.nodes]  # a single community with all nodes
+
+    # establish the layout of the nodes
+    pos = nx.spring_layout(keep_only_communities(nx_graph, communities)
+                           if use_community_layout
+                           else nx_graph)
+
+    # for each community
+    for i, comm in enumerate(communities):
+        # draw the nodes of the community
+        nx.draw_networkx_nodes(
+            nx_graph, pos,
+            nodelist=comm,
+            node_color=f'C{i}',  # in a different colour
             node_size=500,
-            with_labels=True,
-            font_color='w',
-            pos=nx.spring_layout(graph, k=2),
-            labels=mapping,
-            )
+            alpha=0.8)
+
+        # draw the edges of the community
+        nx.draw_networkx_edges(
+            nx_graph, pos,
+            edgelist=get_community_graph(nx_graph, comm).edges,
+            edge_color=f'C{i}')
+
+    # draw all other edges in a single colour
+    nx.draw_networkx_edges(
+        nx_graph, pos,
+        edgelist=get_non_community_edges(nx_graph, communities),
+        alpha=0.5,
+        edge_color='grey')
+
+    # write the characters in each node
+    mapping = dict(zip(nx_graph, map(mapping_fun, nx_graph)))
+    nx.draw_networkx_labels(
+        nx_graph, pos,
+        font_color='w',
+        labels=mapping,
+        font_family=FONT)
 
     plt.show()

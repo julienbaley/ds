@@ -76,7 +76,7 @@ class TestCommunities(unittest.TestCase):
     def test_keep_only_communities(self):
         nx = graph.py2nx(self.nodes, self.edges)
         comms = graph.get_communities(nx)
-        graph.keep_only_communities(nx, comms)
+        nx = graph.keep_only_communities(nx, comms)
 
         self.assertNotIn(('a', 'e'), nx.edges)
         for edge in set(self.edges.keys()) - {('a', 'e')}:

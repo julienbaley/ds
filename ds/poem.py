@@ -8,7 +8,7 @@ from .pronunciation import get_rhyme
 class Poem(dict):
     def get_rhymes(self, lines=None, split=False):
         # this needs improvement: not every character will be a rhyme
-        patt = r'，。\]'
+        patt = r'，。）\]'
         end = '' if split else '$'
 
         return [last_char
