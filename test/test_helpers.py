@@ -24,3 +24,35 @@ class TestWindow(unittest.TestCase):
                           ('c', 'e')
                           },
                          helpers.window_combinations('abcde', len('abcde')))
+
+
+class TestHelpers(unittest.TestCase):
+    def test_get_precision_vector(self):
+        relevant = ['a', 'b', 'c', 'd', 'e', 'f']
+        found = ['a', 'z', 'b', 'c', 'd', 'e', 'y', 'x', 'w', 'f']
+
+        self.assertEquals([1, 1/2, 2/3, 3/4, 4/5, 5/6, 5/7, 5/8, 5/9, 6/10],
+                          helpers.get_precision_vector(found, relevant))
+
+    def test_get_precision_vector2(self):
+        relevant = ['a', 'b', 'c', 'd', 'e', 'f']
+        found = ['z', 'a', 'y', 'x', 'b', 'c', 'd', 'w', 'e', 'f']
+
+        self.assertEquals([0, 1/2, 1/3, 1/4, 2/5, 3/6, 4/7, 4/8, 5/9, 6/10],
+                          helpers.get_precision_vector(found, relevant))
+
+    def test_get_average_precision(self):
+        relevant = ['a', 'b', 'c', 'd', 'e', 'f']
+        found = ['a', 'z', 'b', 'c', 'd', 'e', 'y', 'x', 'w', 'f']
+
+        self.assertAlmostEqual(0.775,
+                               helpers.get_average_precision(found, relevant),
+                               places=3)
+
+    def test_get_average_precision2(self):
+        relevant = ['a', 'b', 'c', 'd', 'e', 'f']
+        found = ['z', 'a', 'y', 'x', 'b', 'c', 'd', 'w', 'e', 'f']
+
+        self.assertAlmostEqual(0.521,
+                               helpers.get_average_precision(found, relevant),
+                               places=3)
