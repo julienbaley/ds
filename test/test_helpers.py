@@ -26,7 +26,7 @@ class TestWindow(unittest.TestCase):
                          helpers.window_combinations('abcde', len('abcde')))
 
 
-class TestHelpers(unittest.TestCase):
+class TestPrecision(unittest.TestCase):
     def test_get_precision_vector(self):
         relevant = ['a', 'b', 'c', 'd', 'e', 'f']
         found = ['a', 'z', 'b', 'c', 'd', 'e', 'y', 'x', 'w', 'f']
@@ -56,3 +56,23 @@ class TestHelpers(unittest.TestCase):
         self.assertAlmostEqual(0.521,
                                helpers.get_average_precision(found, relevant),
                                places=3)
+
+
+class TestTakewhileCdf(unittest.TestCase):
+    def test_takewhile_cdf(self):
+        dict_lst = [
+            {'a': 10, 'b': 10},  # 20%
+            {'a': 35, 'b': 15},  # 50%
+            {'a': 5, 'b': 10},  # 15%
+            {'a': 10, 'b': 1},  # 11%
+            {'a': 2, 'b': 2},  # 4%
+        ]
+        self.assertEquals(len(dict_lst),
+                          len(list(helpers.takewhile_cdf(dict_lst, cdf=1.0))))
+
+        self.assertEquals([{'a': 35, 'b': 15},  # 50%
+                           {'a': 10, 'b': 10},  # 20% > 70%
+                           {'a': 5, 'b': 10},  # 15% > 85%
+                           {'a': 10, 'b': 1},  # 11% > 96%
+                           ],
+                          list(helpers.takewhile_cdf(dict_lst, cdf=0.96)))

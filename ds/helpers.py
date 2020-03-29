@@ -42,3 +42,13 @@ def get_average_precision(results, truth):
         if relevant in results:
             tot += precision_vector[results.index(relevant)]
     return tot / len(truth)
+
+
+def takewhile_cdf(dict_lst, cdf=0.96):
+    tot = sum(map(lambda x: sum(x.values()), dict_lst))
+    cum = 0
+    for x in sorted(dict_lst, key=lambda x: sum(x.values()), reverse=True):
+        yield x
+        cum += sum(x.values()) / tot
+        if cum >= cdf:
+            break
