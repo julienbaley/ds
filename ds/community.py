@@ -66,3 +66,11 @@ def align_communities(comms_a, comms_b):
     for k, v in realign.items():
         ret.append((comms_a[k], comms_b[v]))
     return ret
+
+
+def get_top_missing(comm_a, comm_b):
+    chars_in_common = set(comm_a) & set(comm_b)
+    sorted_chars_a = list(map(itemgetter(0), comm_a.most_common()))
+    useful_range = max(map(sorted_chars_a.index, chars_in_common))
+    useful_chars = set(sorted_chars_a[:useful_range])
+    return useful_chars - set(comm_b)
