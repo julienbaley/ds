@@ -22,3 +22,23 @@ def window_combinations(lst, wsize):
     '''
     return set(chain.from_iterable(map(lambda w: list(combinations(w, 2)),
                                        window(lst, wsize))))
+
+
+def get_precision_vector(results, truth):
+    ret = list()
+    relevant = 0
+    for rank, result in enumerate(results, start=1):
+        if result in truth:
+            relevant += 1
+        ret.append(relevant / rank)
+    return ret
+
+
+def get_average_precision(results, truth):
+    precision_vector = get_precision_vector(results, truth)
+
+    tot = 0
+    for rank, relevant in enumerate(truth, start=0):
+        if relevant in results:
+            tot += precision_vector[results.index(relevant)]
+    return tot / len(truth)
