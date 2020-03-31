@@ -68,3 +68,18 @@ class TestAuthors(unittest.TestCase):
         self.assertEquals(1, len(shaanxi))
         self.assertEquals('韓愈', shaanxi[0]['c_name_chn'])
         self.assertEquals('歐陽詹', fujian[0]['c_name_chn'])
+
+    def test_filter_by_time_range(self):
+        auths = authors.load_authors('qts')
+        self.assertEquals(802, auths['歐陽詹'][0]['c_index_year'])
+        self.assertEquals(825, auths['韓愈'][0]['c_index_year'])
+
+        auths = [auths['歐陽詹'][0], auths['韓愈'][0]]
+
+        early = authors.filter_by_time_range(range(618, 810), auths)
+        late = authors.filter_by_time_range(range(810, 907), auths)
+
+        self.assertEquals(1, len(early))
+        self.assertEquals(1, len(late))
+        self.assertEquals('韓愈', late[0]['c_name_chn'])
+        self.assertEquals('歐陽詹', early[0]['c_name_chn'])
