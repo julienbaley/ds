@@ -72,6 +72,9 @@ def load_authors(collection):
     with open(AUTHOR_CACHE) as f:
         reader = csv.DictReader(f)
         for line in reader:
+            line['c_index_year'] = (int(line['c_index_year'])
+                                    if line['c_index_year']
+                                    else None)
             if line['dynasty'] == DYNASTY.get(collection):
                 ret[line['c_name_chn']].append(line)
 
@@ -94,3 +97,8 @@ def filter_by_area(area, authors):
         return filter_by_area({area}, authors)
 
     return filter_constraint({'province': area.__contains__}, authors)
+
+
+def filter_by_time_range(time_range, authors):
+    return filter_constraint({'c_index_year': time_range.__contains__},
+                             authors)
