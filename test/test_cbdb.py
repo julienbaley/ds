@@ -29,3 +29,19 @@ class TestCbdb(unittest.TestCase):
         ret = cbdb.filter_by_job(rows, job='poet')
         self.assertEqual(1, len(ret))
         self.assertEqual(757, ret[0]['c_birthyear'])
+
+
+class TestFilterByPeriod(unittest.TestCase):
+    def test_filter_by_period(self):
+        allowed_span = range(cbdb.DYNASTIES['唐'][0] - cbdb.LIFE_SPAN,
+                             cbdb.DYNASTIES['唐'][-1] + cbdb.LIFE_SPAN)
+
+        persons = cbdb.get_person('劉濟')  # no dynasty restriction
+        self.assertFalse(all(p['c_index_year'] is None or
+                             p['c_index_year'] in allowed_span
+                             for p in persons))
+
+        persons = cbdb.get_person('劉濟', dyn='唐')
+        self.assertTrue(all(p['c_index_year'] is None or
+                            p['c_index_year'] in allowed_span
+                            for p in persons))
