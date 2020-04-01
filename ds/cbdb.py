@@ -6,6 +6,10 @@ from operator import itemgetter, methodcaller
 from .gis import get_province
 
 DB_FILE = 'third-party/cbdb/CBDB_20190424.db'
+LIFE_SPAN = 80  # years
+DYNASTIES = {'唐': range(618, 908),
+             '宋': range(960, 1279),
+             }
 
 
 @contextmanager
@@ -108,6 +112,30 @@ def filter_by_job(rows, job):
         return rows
 
 
+def filter_by_period(dicts, time_range):
+    def matches(dic):
+        start = dic['c_birthyear'] or None
+        end = dic['c_deathyear'] or None
+        idx = dic['c_index_year'] or None
+        if start is None and end is None and idx is None:
+            return True  # this is arbitrary, could be false too...
+        else:
+            if start is None:
+                if end is None:  # idx cannot be None
+                    start = idx - LIFE_SPAN
+                    end = idx + LIFE_SPAN
+                else:
+                    start = end - LIFE_SPAN
+            if end is None:
+                end = start + LIFE_SPAN
+        return bool(set(range(start, end+1)) & set(time_range))
+
+    if time_range is not None:
+        return list(filter(matches, dicts))
+    else:
+        return dicts
+
+
 # only public method
 
 def get_person(name, zis=None, dyn=None, job=None):
@@ -121,6 +149,7 @@ def get_person(name, zis=None, dyn=None, job=None):
 
     dicts = rows2dicts(rows)
     dicts = pick_one_per_address(dicts)
+    dicts = filter_by_period(dicts, DYNASTIES.get(dyn))
 
     for p in dicts:
         p['dynasty'] = dyn
