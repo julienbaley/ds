@@ -27,12 +27,13 @@ def nx2igraph(nx_graph):
     return ret
 
 
-def build_single_poem_graph(poem, rhyme_group_fun):
+def build_single_poem_graph(poem):
     nodes = Counter()
     edges = Counter()
-    rhymes = rhyme_group_fun(poem)
+    rhymes = [poem.get_rhymes()]
+    rhyme_categories = rhymes
     rhyme_groups = map(lambda x: list(map(lambda y: Node(*y), zip(*x))),
-                       zip(rhymes, rhymes))
+                       zip(rhymes, rhyme_categories))
     for rhyme_group in rhyme_groups:
         for c in rhyme_group:
             nodes[c] += 1
@@ -42,11 +43,11 @@ def build_single_poem_graph(poem, rhyme_group_fun):
     return nodes, edges
 
 
-def build_python_graph(poems, rhyme_group_fun):
+def build_python_graph(poems):
     nodes = Counter()
     edges = Counter()
     for poem in tqdm(poems):
-        poem_nodes, poem_edges = build_single_poem_graph(poem, rhyme_group_fun)
+        poem_nodes, poem_edges = build_single_poem_graph(poem)
         for n, w in poem_nodes.items():
             nodes[n] += w
         for e, w in poem_edges.items():
@@ -69,8 +70,8 @@ def py2nx(nodes, edges):
 # public functions
 
 
-def build_graph(poems, rhyme_group_fun=lambda poem: [poem.get_rhymes()]):
-    nodes, edges = build_python_graph(poems, rhyme_group_fun)
+def build_graph(poems):
+    nodes, edges = build_python_graph(poems)
     return py2nx(nodes, edges)
 
 

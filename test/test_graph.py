@@ -13,13 +13,8 @@ class TestGraph(unittest.TestCase):
                      '白頭搔更短，渾欲不勝簪。']
         self.poem = Poem({'paragraphs': self.poem})
 
-    @staticmethod
-    def grouping_fun(p):
-        return [Poem.get_rhymes(p)]
-
     def test_build_single_poem_graph(self):
-        nodes, edges = graph.build_single_poem_graph(self.poem,
-                                                     self.grouping_fun)
+        nodes, edges = graph.build_single_poem_graph(self.poem)
 
         N = {k: graph.Node(k, k) for k in '深心金簪'}
         self.assertEquals(Counter(map(N.get, '深心金簪')), nodes)
@@ -32,17 +27,14 @@ class TestGraph(unittest.TestCase):
                           edges)
 
     def test_build_python_graph(self):
-        p_nodes, p_edges = graph.build_single_poem_graph(self.poem,
-                                                         self.grouping_fun)
+        p_nodes, p_edges = graph.build_single_poem_graph(self.poem)
         # we build a corpus of twice the same poem
-        nodes, edges = graph.build_python_graph([self.poem, self.poem],
-                                                self.grouping_fun)
+        nodes, edges = graph.build_python_graph([self.poem, self.poem])
         self.assertEquals(p_nodes + p_nodes, nodes)
         self.assertEquals(p_edges + p_edges, edges)
 
     def test_py2nx(self):
-        nodes, edges = graph.build_single_poem_graph(self.poem,
-                                                     self.grouping_fun)
+        nodes, edges = graph.build_single_poem_graph(self.poem)
         gph = graph.py2nx(nodes, edges)
         for node, data in gph.nodes(data=True):
             self.assertEquals(nodes[node], data['weight'])
