@@ -1,5 +1,5 @@
 import tempfile
-from collections import Counter
+from collections import Counter, namedtuple
 from html import unescape
 from itertools import chain, filterfalse
 from operator import itemgetter
@@ -14,6 +14,7 @@ from .helpers import window_combinations
 
 FONT = 'Noto Sans CJK TC'
 matplotlib.rcParams['font.family'] = FONT
+Node = namedtuple('Node', ['char', 'rime'], defaults=[''])
 
 
 def nx2igraph(nx_graph):
@@ -29,7 +30,10 @@ def nx2igraph(nx_graph):
 def build_single_poem_graph(poem, rhyme_group_fun):
     nodes = Counter()
     edges = Counter()
-    for rhyme_group in rhyme_group_fun(poem):
+    rhymes = rhyme_group_fun(poem)
+    rhyme_groups = map(lambda x: list(map(lambda y: Node(*y), zip(*x))),
+                       zip(rhymes, rhymes))
+    for rhyme_group in rhyme_groups:
         for c in rhyme_group:
             nodes[c] += 1
         for a, b in window_combinations(rhyme_group, len(rhyme_group)):
@@ -54,7 +58,7 @@ def build_python_graph(poems, rhyme_group_fun):
 def py2nx(nodes, edges):
     ret = nx.Graph()
     for node, weight in nodes.items():
-        ret.add_node(node, weight=weight)
+        ret.add_node(node, weight=weight, rime=getattr(node, 'rime', ''))
     for (a, b), weight in edges.items():
         ret.add_edge(a, b, weight=weight)
 

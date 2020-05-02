@@ -23,13 +23,14 @@ class TestGraph(unittest.TestCase):
         nodes, edges = graph.build_single_poem_graph(self.poem,
                                                      self.grouping_fun)
 
-        self.assertEquals(Counter('深心金簪'), nodes)
-        self.assertEquals(Counter({('簪', '金'): 1,
-                                   ('心', '深'): 1,
-                                   ('心', '簪'): 1,
-                                   ('心', '金'): 1,
-                                   ('深', '金'): 1,
-                                   ('深', '簪'): 1}),
+        N = {k: graph.Node(k, k) for k in '深心金簪'}
+        self.assertEquals(Counter(map(N.get, '深心金簪')), nodes)
+        self.assertEquals(Counter({(N['簪'], N['金']): 1,
+                                   (N['心'], N['深']): 1,
+                                   (N['心'], N['簪']): 1,
+                                   (N['心'], N['金']): 1,
+                                   (N['深'], N['金']): 1,
+                                   (N['深'], N['簪']): 1}),
                           edges)
 
     def test_build_python_graph(self):
