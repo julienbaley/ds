@@ -74,9 +74,9 @@ def get_communities(nx_graph):
     i_graph = nx2igraph(nx_graph)
     communities = i_graph.community_infomap(edge_weights='weight',
                                             vertex_weights='weight')
-    ret = {frozenset(map(itemgetter('label'),
+    ret = [frozenset(map(itemgetter('label'),
                          map(i_graph.vs.__getitem__, community)))
-           for community in communities}
+           for community in communities]
     print('Communities computed')
     return ret
 

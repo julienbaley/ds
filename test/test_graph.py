@@ -69,9 +69,9 @@ class TestCommunities(unittest.TestCase):
     def test_get_communities(self):
         nx = graph.py2nx(self.nodes, self.edges)
         comms = graph.get_communities(nx)
-        self.assertEquals({frozenset({'a', 'wa', 'ia'}),
-                           frozenset({'e', 'ie'})},
-                          comms)
+        self.assertEquals(sorted([frozenset({'a', 'wa', 'ia'}),
+                                  frozenset({'e', 'ie'})]),
+                          sorted(comms))
 
     def test_keep_only_communities(self):
         nx = graph.py2nx(self.nodes, self.edges)
