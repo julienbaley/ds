@@ -2,22 +2,20 @@ import unittest
 from collections import Counter
 
 from ds import graph
+from ds.poem import Poem
 
 
 class TestGraph(unittest.TestCase):
     def setUp(self):
-        self.poem = ['國破山河在',
-                     '城春草木深',
-                     '感時花濺淚',
-                     '恨別鳥驚心',
-                     '峰火連三月',
-                     '家書抵萬金',
-                     '白頭搔更短',
-                     '渾欲不勝簪']
+        self.poem = ['國破山河在，城春草木深。',
+                     '感時花濺淚，恨別鳥驚心。',
+                     '峰火連三月，家書抵萬金。',
+                     '白頭搔更短，渾欲不勝簪。']
+        self.poem = Poem({'paragraphs': self.poem})
 
     @staticmethod
     def grouping_fun(p):
-        return [[line[-1] for line in p[1::2]]]  # all even lines rhyme
+        return [Poem.get_rhymes(p)]
 
     def test_build_single_poem_graph(self):
         nodes, edges = graph.build_single_poem_graph(self.poem,
