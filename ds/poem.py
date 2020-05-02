@@ -17,14 +17,15 @@ class Poem(dict):
                 for last_char in re.findall(f'([^{patt}])[{patt}]+{end}', line)
                 ]
 
-    def get_rhyme_categories(self, prons):
+    def get_rhyme_categories(self):
         # retrieve characters that are in rhyme position
         rhymes = self.get_rhymes()
 
         # obtain their GY rhyme: many will have several possibilities
         # e.g. 長 => 陽 / 漾 / 養
-        rhyme_sets = list(map(frozenset, map(lambda rh: get_rhyme(rh, prons),
-                                             rhymes)))
+        rhyme_sets = list(map(frozenset,
+                              map(lambda rh: get_rhyme(rh, self['prons']),
+                                  rhymes)))
 
         # disambiguate by looking at which rhymes would actually rhyme
         # e.g. if the line before/after contains 章 (陽 as the only possible
@@ -43,8 +44,8 @@ class Poem(dict):
 
         return [''.join(sorted(gy)) for gy in gy_rhymes]
 
-    def find_rhyme_pairs(self, prons, pair):
-        gy_rhymes = self.get_rhyme_categories(prons)
+    def find_rhyme_pairs(self, pair):
+        gy_rhymes = self.get_rhyme_categories()
         rhyme_pairs = set(map(tuple, map(sorted,
                                          window_combinations(gy_rhymes, 2))))
         searched_pairs = set(map(tuple, map(sorted, product(*pair))))

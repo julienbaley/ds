@@ -11,12 +11,18 @@ class TestGraph(unittest.TestCase):
                      '感時花濺淚，恨別鳥驚心。',
                      '峰火連三月，家書抵萬金。',
                      '白頭搔更短，渾欲不勝簪。']
-        self.poem = Poem({'paragraphs': self.poem})
+        self.prons = {
+            '深': [{'GY Rhyme': '侵'}, {'GY Rhyme': '沁'}],
+            '心': [{'GY Rhyme': '侵'}],
+            '金': [{'GY Rhyme': '侵'}],
+            '簪': [{'GY Rhyme': '侵'}, {'GY Rhyme': '覃'}],
+        }
+        self.poem = Poem({'paragraphs': self.poem, 'prons': self.prons})
 
     def test_build_single_poem_graph(self):
         nodes, edges = graph.build_single_poem_graph(self.poem)
 
-        N = {k: graph.Node(k, k) for k in '深心金簪'}
+        N = {k: graph.Node(k, '侵') for k in '深心金簪'}
         self.assertEquals(Counter(map(N.get, '深心金簪')), nodes)
         self.assertEquals(Counter({(N['簪'], N['金']): 1,
                                    (N['心'], N['深']): 1,

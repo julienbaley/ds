@@ -29,16 +29,11 @@ class TestPoem(unittest.TestCase):
         self.assertEquals(['深', '心', '金', '簪'], p.get_rhymes())
 
     def test_get_rhyme_categories(self):
-        p = poem.Poem(paragraphs=self.poem)
+        p = poem.Poem(paragraphs=self.poem, prons=self.prons)
         self.assertEquals(['侵', '侵', '侵', '侵'],
-                          p.get_rhyme_categories(self.prons))
+                          p.get_rhyme_categories())
 
     def test_find_rhyme_pairs(self):
-        p = poem.Poem(paragraphs=['風雅不墜地，五言始君先。',  # 先
-                                  '希微嘉會章，杳冥河梁篇。',  # 仙
-                                  '理蔓語無枝，言一意則千。',  # 先
-                                  '往來更後人，澆蕩醨前源。',  # 元
-                                  ])
         prons = {
             '先': [{'GY Rhyme': '先'}],
             '篇': [{'GY Rhyme': '仙'}],
@@ -46,5 +41,12 @@ class TestPoem(unittest.TestCase):
             '源': [{'GY Rhyme': '元'}],
         }
 
+        p = poem.Poem(paragraphs=['風雅不墜地，五言始君先。',  # 先
+                                  '希微嘉會章，杳冥河梁篇。',  # 仙
+                                  '理蔓語無枝，言一意則千。',  # 先
+                                  '往來更後人，澆蕩醨前源。',  # 元
+                                  ],
+                      prons=prons)
+
         self.assertEquals({('元', '先'), },
-                          p.find_rhyme_pairs(prons, ('仙先文', '元')))
+                          p.find_rhyme_pairs(('仙先文', '元')))
