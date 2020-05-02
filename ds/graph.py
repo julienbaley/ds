@@ -1,3 +1,5 @@
+import random
+import statistics
 import tempfile
 from collections import Counter, namedtuple
 from html import unescape
@@ -161,3 +163,33 @@ def plot(nx_graph, mapping_fun=lambda c: c, communities=None,
 
 def get_assortativity(nx_graph):
     return nx.attribute_assortativity_coefficient(nx_graph, 'rime')
+
+
+def shuffle(nx_graph):
+    rimes = list(map(itemgetter('rime'),
+                     map(itemgetter(1),
+                         nx_graph.nodes(data=True))))
+    random.shuffle(rimes)
+
+    ret = nx_graph.copy()
+    new_nodes = dict()
+    for (node, attrs), rime in zip(ret.nodes(data=True), rimes):
+        new_nodes[node] = attrs
+        new_nodes[node]['rime'] = rime
+    ret.update(nodes=new_nodes)
+    return ret
+
+
+def get_pval_sigma(nx_graph):
+    n = 1000
+    assort_seen = get_assortativity(nx_graph)
+    assorts_gen = [get_assortativity(shuffle(nx_graph)) for _ in range(n)]
+
+    pval = (1 + sum(map(assort_seen.__lt__, assorts_gen))) / (1 + n)
+
+    assort_expected = statistics.mean(assorts_gen)
+    assort_stdev = statistics.pstdev(assorts_gen, mu=assort_expected)
+    sigma = (assort_seen - assort_expected) / assort_stdev
+
+    print(assort_seen, assort_expected, assort_stdev)
+    return pval, sigma

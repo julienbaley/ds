@@ -1,5 +1,6 @@
 import unittest
 from collections import Counter
+from operator import itemgetter
 
 from ds import graph
 from ds.poem import Poem
@@ -90,44 +91,87 @@ class TestCommunities(unittest.TestCase):
 
 class TestAssortativity(unittest.TestCase):
     def setUp(self):
-        self.Nodes = {1: graph.Node(1, 'blue'),
-                      2: graph.Node(2, 'blue'),
-                      3: graph.Node(3, 'blue'),
-                      4: graph.Node(4, 'red'),
-                      5: graph.Node(5, 'red'),
-                      6: graph.Node(6, 'red'),
-                      }
+        N = {1: graph.Node(1, 'blue'),
+             2: graph.Node(2, 'blue'),
+             3: graph.Node(3, 'blue'),
+             4: graph.Node(4, 'red'),
+             5: graph.Node(5, 'red'),
+             6: graph.Node(6, 'red'),
+             }
+        nodes = {k: 1 for k in N.values()}
+        # 123 together, 456 together, 3-4 bridge
+        edges1 = {(N[1], N[2]): 1,
+                  (N[1], N[3]): 1,
+                  (N[2], N[3]): 1,
+                  (N[3], N[4]): 1,
+                  (N[4], N[5]): 1,
+                  (N[4], N[6]): 1,
+                  (N[5], N[6]): 1,
+                  }
+        # 3456 together, 1-2, 1-6, 2-3, 2-6
+        edges2 = {(N[1], N[2]): 1,
+                  (N[1], N[6]): 1,
+                  (N[2], N[3]): 1,
+                  (N[2], N[6]): 1,
+                  (N[3], N[4]): 1,
+                  (N[3], N[5]): 1,
+                  (N[3], N[6]): 1,
+                  (N[4], N[5]): 1,
+                  (N[4], N[6]): 1,
+                  (N[5], N[6]): 1,
+                  }
+        # each blue links to all red, no other links
+        edges3 = {(N[1], N[4]): 1,
+                  (N[1], N[5]): 1,
+                  (N[1], N[6]): 1,
+                  (N[2], N[4]): 1,
+                  (N[2], N[5]): 1,
+                  (N[2], N[6]): 1,
+                  (N[3], N[4]): 1,
+                  (N[3], N[5]): 1,
+                  (N[3], N[6]): 1,
+                  }
 
-    def test_assortativity_1(self):
-        nodes = {k: 1 for k in self.Nodes.values()}
-        N = self.Nodes
-        edges = {(N[1], N[2]): 1,
-                 (N[1], N[3]): 1,
-                 (N[2], N[3]): 1,
-                 (N[3], N[4]): 1,
-                 (N[4], N[5]): 1,
-                 (N[4], N[6]): 1,
-                 (N[5], N[6]): 1,
-                 }
-        nx = graph.py2nx(nodes, edges)
+        self.assort_nx = graph.py2nx(nodes, edges1)
+        self.less_assort_nx = graph.py2nx(nodes, edges2)
+        self.not_assort_nx = graph.py2nx(nodes, edges3)
+
+    def test_assortativity(self):
         self.assertAlmostEqual(0.71,
-                               graph.get_assortativity(nx),
+                               graph.get_assortativity(self.assort_nx),
+                               places=2)
+        self.assertAlmostEqual(0,
+                               graph.get_assortativity(self.less_assort_nx),
+                               places=1)
+        self.assertAlmostEqual(-1,
+                               graph.get_assortativity(self.not_assort_nx),
                                places=2)
 
-    def test_assortativity_2(self):
-        nodes = {k: 1 for k in self.Nodes.values()}
-        N = self.Nodes
-        edges = {(N[1], N[2]): 1,
-                 (N[1], N[6]): 1,
-                 (N[2], N[3]): 1,
-                 (N[3], N[4]): 1,
-                 (N[3], N[5]): 1,
-                 (N[3], N[6]): 1,
-                 (N[4], N[5]): 1,
-                 (N[4], N[6]): 1,
-                 (N[5], N[6]): 1,
-                 }
-        nx = graph.py2nx(nodes, edges)
-        self.assertAlmostEqual(0.1,
-                               graph.get_assortativity(nx),
-                               places=2)
+    def test_shuffle(self):
+        nx = self.assort_nx
+        nx_shuffled = graph.shuffle(nx)
+
+        def iter_rimes(nx_graph):
+            return map(itemgetter('rime'),
+                       map(itemgetter(1),
+                           nx_graph.nodes(data=True)))
+
+        self.assertEquals(Counter(iter_rimes(nx)),
+                          Counter(iter_rimes(nx_shuffled)))
+
+        self.assertEquals(set(nx.nodes), set(nx_shuffled.nodes))
+        self.assertEquals(nx.edges, nx_shuffled.edges)
+
+        self.assertNotEquals(graph.get_assortativity(nx),
+                             graph.get_assortativity(nx_shuffled))
+
+    def test_pval_sigma(self):
+        pval_ass, sigma_ass = graph.get_pval_sigma(self.assort_nx)
+        pval_less, sigma_less = graph.get_pval_sigma(self.less_assort_nx)
+        pval_not, sigma_not = graph.get_pval_sigma(self.not_assort_nx)
+
+        self.assertLess(pval_ass, pval_less)
+        self.assertLess(pval_less, pval_not)
+
+        self.assertGreater(sigma_ass, sigma_less)
+        self.assertGreater(sigma_less, sigma_not)
