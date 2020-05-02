@@ -31,7 +31,8 @@ def build_single_poem_graph(poem):
     nodes = Counter()
     edges = Counter()
     rhymes = [poem.get_rhymes()]
-    rhyme_categories = rhymes
+    rhyme_categories = [poem.get_rhyme_categories()]
+
     rhyme_groups = map(lambda x: list(map(lambda y: Node(*y), zip(*x))),
                        zip(rhymes, rhyme_categories))
     for rhyme_group in rhyme_groups:
