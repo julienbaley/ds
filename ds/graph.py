@@ -152,3 +152,10 @@ def plot(nx_graph, mapping_fun=lambda c: c, communities=None,
         font_family=FONT)
 
     plt.show()
+
+
+# Assortativity
+
+
+def get_assortativity(nx_graph):
+    return nx.attribute_assortativity_coefficient(nx_graph, 'rime')

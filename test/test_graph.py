@@ -90,3 +90,48 @@ class TestCommunities(unittest.TestCase):
         for comm in comms:
             subgph = graph.get_community_graph(nx, comm)
             self.assertEquals(comm, set(subgph.nodes))
+
+
+class TestAssortativity(unittest.TestCase):
+    def setUp(self):
+        self.Nodes = {1: graph.Node(1, 'blue'),
+                      2: graph.Node(2, 'blue'),
+                      3: graph.Node(3, 'blue'),
+                      4: graph.Node(4, 'red'),
+                      5: graph.Node(5, 'red'),
+                      6: graph.Node(6, 'red'),
+                      }
+
+    def test_assortativity_1(self):
+        nodes = {k: 1 for k in self.Nodes.values()}
+        N = self.Nodes
+        edges = {(N[1], N[2]): 1,
+                 (N[1], N[3]): 1,
+                 (N[2], N[3]): 1,
+                 (N[3], N[4]): 1,
+                 (N[4], N[5]): 1,
+                 (N[4], N[6]): 1,
+                 (N[5], N[6]): 1,
+                 }
+        nx = graph.py2nx(nodes, edges)
+        self.assertAlmostEqual(0.71,
+                               graph.get_assortativity(nx),
+                               places=2)
+
+    def test_assortativity_2(self):
+        nodes = {k: 1 for k in self.Nodes.values()}
+        N = self.Nodes
+        edges = {(N[1], N[2]): 1,
+                 (N[1], N[6]): 1,
+                 (N[2], N[3]): 1,
+                 (N[3], N[4]): 1,
+                 (N[3], N[5]): 1,
+                 (N[3], N[6]): 1,
+                 (N[4], N[5]): 1,
+                 (N[4], N[6]): 1,
+                 (N[5], N[6]): 1,
+                 }
+        nx = graph.py2nx(nodes, edges)
+        self.assertAlmostEqual(0.1,
+                               graph.get_assortativity(nx),
+                               places=2)
