@@ -19,7 +19,7 @@ DYNASTY = {'qts': '唐',
            'qss': '宋',
            'qsc': '宋',
            }
-AUTHOR_CACHE = 'cache/authors.csv'
+AUTHOR_CACHE = 'cache/authors.{0}.csv'
 
 NORTH = {'河南', '陝西', '河北', '山西', '山東', '甘肅', '北京', '遼寧', '天津',
          '新疆', '寧夏', '内蒙古'}
@@ -45,8 +45,8 @@ def get_zis(author):
     return ret
 
 
-def write_cache(persons):
-    with open(AUTHOR_CACHE, 'w', newline='') as g:
+def write_cache(persons, collection):
+    with open(AUTHOR_CACHE.format(collection), 'w', newline='') as g:
         writer = csv.DictWriter(g, fieldnames=persons[0].keys())
         writer.writeheader()
         for person in persons:
@@ -64,12 +64,12 @@ def cache_authors(collection):
 
     pprint(Counter(map(len, persons)))
     persons = list(chain.from_iterable(persons))
-    write_cache(persons)
+    write_cache(persons, collection)
 
 
 def load_authors(collection):
     ret = defaultdict(list)
-    with open(AUTHOR_CACHE) as f:
+    with open(AUTHOR_CACHE.format(collection)) as f:
         reader = csv.DictReader(f)
         for line in reader:
             line['c_index_year'] = (int(line['c_index_year'])
