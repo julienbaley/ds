@@ -2,6 +2,8 @@ import unittest
 from collections import Counter
 from operator import itemgetter
 
+from flaky import flaky
+
 from ds import graph
 from ds.poem import Poem
 
@@ -147,6 +149,7 @@ class TestAssortativity(unittest.TestCase):
                                graph.get_assortativity(self.not_assort_nx),
                                places=2)
 
+    @flaky
     def test_shuffle(self):
         nx = self.assort_nx
         nx_shuffled = graph.shuffle(nx)
