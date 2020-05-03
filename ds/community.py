@@ -2,13 +2,10 @@ from collections import Counter
 from operator import itemgetter
 
 from .helpers import get_average_precision
-from .pronunciation import get_rhyme
 
 
-def get_community_rhyme_categories(community, prons):
-    rhyme_cnt = Counter(rhyme
-                        for char in community
-                        for rhyme in get_rhyme(char, prons))
+def get_community_rhyme_categories(community):
+    rhyme_cnt = Counter(rhyme for node in community for rhyme in node.rime)
     return Counter(dict(rhyme_cnt.most_common(8)))
 
 

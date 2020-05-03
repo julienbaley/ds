@@ -22,7 +22,7 @@ Node = namedtuple('Node', ['char', 'rime'], defaults=[''])
 def nx2igraph(nx_graph):
     with tempfile.NamedTemporaryFile(mode='w+') as g:
         temp_gml = g.name
-        nx.write_gml(nx_graph, temp_gml)
+        nx.write_gml(nx_graph, temp_gml, stringizer=str)
         ret = Graph.Read_GML(temp_gml)
     for v in ret.vs:
         v['label'] = unescape(v['label'])
@@ -82,8 +82,13 @@ def get_communities(nx_graph):
     i_graph = nx2igraph(nx_graph)
     communities = i_graph.community_infomap(edge_weights='weight',
                                             vertex_weights='weight')
-    ret = [frozenset(map(itemgetter('label'),
-                         map(i_graph.vs.__getitem__, community)))
+
+    def my_eval(s):
+        return eval(s) if s.startswith('Node') else s
+
+    ret = [frozenset(map(my_eval,
+                         map(itemgetter('label'),
+                             map(i_graph.vs.__getitem__, community))))
            for community in communities]
     print('Communities computed')
     return ret
@@ -191,5 +196,4 @@ def get_pval_sigma(nx_graph):
     assort_stdev = statistics.pstdev(assorts_gen, mu=assort_expected)
     sigma = (assort_seen - assort_expected) / assort_stdev
 
-    print(assort_seen, assort_expected, assort_stdev)
     return pval, sigma
