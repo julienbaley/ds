@@ -3,7 +3,9 @@ import json
 import re
 from collections import Counter, defaultdict
 from itertools import chain
+from multiprocessing.pool import Pool
 from operator import itemgetter
+from os import cpu_count
 from pprint import pprint
 
 from tqdm import tqdm
@@ -53,14 +55,23 @@ def write_cache(persons, collection):
             writer.writerow(person)
 
 
+def get_person_wrapper(kwargs):
+    return get_person(**kwargs)
+
+
 def cache_authors(collection):
     authors = get_authors(collection)
-    persons = [get_person(author['name'],
-                          zis=get_zis(author),
-                          dyn=DYNASTY.get(collection),
-                          job='poet',
-                          )
-               for author in tqdm(authors)]
+    kwargs = [dict(name=author['name'],
+                   zis=get_zis(author),
+                   dyn=DYNASTY.get(collection),
+                   job='poet',
+                   )
+              for author in authors]
+
+    with Pool(cpu_count()-1) as p:
+        persons = [person
+                   for person in tqdm(p.imap(get_person_wrapper, kwargs),
+                                      total=len(kwargs))]
 
     pprint(Counter(map(len, persons)))
     persons = list(chain.from_iterable(persons))
