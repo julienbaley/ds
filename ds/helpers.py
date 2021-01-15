@@ -1,6 +1,11 @@
 from itertools import chain, combinations
 
 
+def annotation_to_selectors(annotation_list):
+    return [[annotation == k for annotation in annotation_list]
+            for k in set(annotation_list)]
+
+
 def filter_constraint(constraint_dict, it):
     for k, f in constraint_dict.items():
         it = filter(lambda a: f(a[k]), it)
@@ -52,3 +57,22 @@ def takewhile_cdf(dict_lst, cdf=0.96):
         cum += sum(x.values()) / tot
         if cum >= cdf:
             break
+
+
+def get_counter_cdf(counter):
+    tot = sum(counter.values())
+    cum = 0
+    ret = list()
+    for k, v in counter.most_common():
+        cum += v
+        ret.append((k, cum/tot))
+    return ret
+
+
+def takewhile_counter_cdf(counter, cdf=0.75):
+    ret = list()
+    for k, v in get_counter_cdf(counter):
+        ret.append(k)
+        if v > cdf:
+            break
+    return ret

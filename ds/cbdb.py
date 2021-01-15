@@ -53,7 +53,7 @@ def query_name(name):
         cursor.execute(
             f'''SELECT DISTINCT
                     biog_main.c_personid, biog_main.c_name_chn,
-                    c_index_year, c_birthyear, c_deathyear,
+                    c_index_year, c_birthyear, c_deathyear, c_dynasty_chn,
                     addresses.c_name_chn as address, x_coord, y_coord
 
                 FROM biog_main
@@ -61,6 +61,8 @@ def query_name(name):
                 ON biog_main.c_personid == biog_addr_data.c_personid
                 LEFT JOIN addresses
                 ON biog_addr_data.c_addr_id == addresses.c_addr_id
+                LEFT JOIN dynasties
+                ON biog_main.c_dy == dynasties.c_dy
 
                 WHERE biog_main.c_name_chn == "{name}"
                 ''')
@@ -152,7 +154,7 @@ def get_person(name, zis=None, dyn=None, job=None):
     dicts = filter_by_period(dicts, DYNASTIES.get(dyn))
 
     for p in dicts:
-        p['dynasty'] = dyn
+        p['dynasty'] = p.pop('c_dynasty_chn') or dyn
         p['province'] = get_province(x=p['x_coord'], y=p['y_coord'])
         p['prefecture'] = get_province(x=p['x_coord'], y=p['y_coord'],
                                        type='prefecture')

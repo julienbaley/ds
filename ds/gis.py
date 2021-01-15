@@ -8,7 +8,7 @@ prov90 = 'third-party/gis/v6_citas90_prov_pgn_gbk'
 pref90 = 'third-party/gis/v6_citas90_pref_pgn_gbk'
 
 
-def get_transormer(prj_file):
+def get_transformer(prj_file):
     prj_text = open(prj_file, 'r').read()
     srs = osr.SpatialReference()
     if srs.ImportFromWkt(prj_text):
@@ -27,7 +27,7 @@ def get_reader(db):
     return shapefile.Reader(**params, encoding=encoding)
 
 
-transformer = get_transormer(f'{prov90}.prj')
+transformer = get_transformer(f'{prov90}.prj')
 readers = {'province': get_reader(prov90),
            'prefecture': get_reader(pref90),
            }

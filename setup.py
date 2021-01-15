@@ -58,4 +58,8 @@ setup(name='ds',
           'urllib3==1.25.7',
           'zhon==1.1.5',
       ],
+      entry_points={
+          'console_scripts': ['ds = ds.main:main',
+                              ]
+      },
       )

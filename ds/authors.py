@@ -16,6 +16,7 @@ from .helpers import filter_constraint
 
 AUTHORS = {'qts': 'third-party/chinese-poetry/json/authors.tang.json',
            'qss': 'third-party/chinese-poetry/json/authors.song.json',
+           'qsc': 'third-party/chinese-poetry/ci/author.song.json',
            }
 DYNASTY = {'qts': '唐',
            'qss': '宋',
@@ -36,13 +37,15 @@ def get_authors(collection):
 
 def get_zis(author):
     ret = set()
-    for m in re.findall('字([^，。]{,6}?)[，。]', author['desc']):
+    for m in re.findall('字([^，。]{,6}?)[，。]',
+                        author.get('desc', author.get('description'))):
         if '一作' in m:
             ret.add(re.sub('.一作', '', m))
             ret.add(re.sub('一作.', '', m))
         else:
             ret.add(m)
-    for m in re.findall('諡曰([^，。]{,6}?)[，。]', author['desc']):
+    for m in re.findall('諡曰([^，。]{,6}?)[，。]',
+                        author.get('desc', author.get('description'))):
         ret.add(m)
     return ret
 

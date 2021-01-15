@@ -1,12 +1,20 @@
 from collections import Counter
-from operator import itemgetter
+from operator import attrgetter, itemgetter
 
-from .helpers import get_average_precision
+from .helpers import get_average_precision, takewhile_counter_cdf
 
 
 def get_community_rhyme_categories(community):
     rhyme_cnt = Counter(rhyme for node in community for rhyme in node.rime)
     return Counter(dict(rhyme_cnt.most_common(8)))
+
+
+def get_community_label(community, cdf=0.75):
+    rhyme_cnt = Counter(rhyme for node in community for rhyme in node.rime)
+    labels = takewhile_counter_cdf(rhyme_cnt, cdf=cdf)
+    if '?' in labels:
+        labels = labels[:labels.index('?')]
+    return '/'.join(labels)
 
 
 def align_communities(comms_a, comms_b):
@@ -71,3 +79,7 @@ def get_top_missing(comm_a, comm_b):
     useful_range = max(map(sorted_chars_a.index, chars_in_common))
     useful_chars = set(sorted_chars_a[:useful_range])
     return useful_chars - set(comm_b)
+
+
+def community_node_to_set(community):
+    return set(map(attrgetter('char'), community))

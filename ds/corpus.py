@@ -7,13 +7,14 @@ from .poem import Poem
 
 CORPORA = {'qts': 'third-party/chinese-poetry/json/poet.tang',
            'qss': 'third-party/chinese-poetry/json/poet.song',
-           'qsc': 'third-party/chinese-poetry/ci2/ci.song',
+           'qsc': 'third-party/chinese-poetry/ci/ci.song',
            }
 
 
 def get_corpus(name):
     def clean_line(line):
-        return line.replace('[', '').replace(']', '')
+        line = line.replace('[', '').replace(']', '')
+        return line
 
     def get_poems(filename):
         with open(filename) as f:
@@ -29,7 +30,7 @@ def get_corpus(name):
     for filename in sorted(files, key=lambda fn: int(fn.split('.')[-2])):
         ret.extend(get_poems(filename))
 
-    print(f'{len(ret)} poems in corpus')
+    print(f'{len(ret)} poems in corpus {name}')
     return list(map(Poem, ret))
 
 

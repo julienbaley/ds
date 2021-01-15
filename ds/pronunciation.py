@@ -8,6 +8,8 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 
+from .replacements import replacements
+
 CACHE_FILE = 'cache/pronunciation.cache.csv'
 EDOC_URL = 'http://edoc.uchicago.edu/edoc2013/digitaledoc_linearformat.php'
 EDOC_FIELDS = (('qygy[]', 'QYRhymeName'),
@@ -164,4 +166,15 @@ def get_final(pron):
 
 
 def get_rhyme(c, prons):
-    return sorted(set(p['GY Rhyme'] for p in prons[c] if p['GY Rhyme']))
+    ret = sorted(set(p['GY Rhyme'] for p in prons[c] if p['GY Rhyme']))
+    if not ret and c in replacements:
+        return get_rhyme(replacements[c], prons)
+    return ret
+
+
+def apply_tongyong(rime, sbgy):
+    if rime in sbgy:
+        eq = sbgy[rime].eq
+        if eq is not None:
+            return eq
+    return rime

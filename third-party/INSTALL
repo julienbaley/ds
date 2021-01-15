@@ -15,3 +15,8 @@ do
     wget https://dataverse.harvard.edu/api/access/datafile/${id}?gbrecs=true -O temp.zip && unzip temp.zip && rm temp.zip;
 done
 cd ..
+
+mkdir sbgy
+cd sbgy
+wget https://github.com/cjkvi/cjkvi-dict/raw/master/sbgy.xml
+cd ..
