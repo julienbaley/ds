@@ -55,7 +55,7 @@ setup(name='ds',
           'sklearn==0.0',
           'soupsieve==1.9.5',
           'tqdm==4.41.0',
-          'urllib3==1.25.7',
+          'urllib3==1.25.8',
           'zhon==1.1.5',
       ],
       entry_points={
